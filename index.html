@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>منظف الصور | إزالة البيانات الوصفية وحماية الخصوصية</title>
+<meta name="description" content="ارفع صورتك وسيتم حذف كل بيانات التتبع والـ EXIF وإعادة بناء الصورة نظيفة 100% داخل متصفحك. يعمل على GitHub Pages بدون سيرفر.">
+<link rel="stylesheet" href="styles.css">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🛡️</text></svg>">
+</head>
+<body>
+<header class="hero">
+  <div class="container">
+    <div class="badge">🔒 يعمل 100% داخل متصفحك — لا يتم رفع أي صورة</div>
+    <h1>🛡️ منظف الصور من بيانات التتبع</h1>
+    <p class="subtitle">ارفع صورتك → نحذف <b>EXIF ،GPS ،XMP ،IPTC ،المصغرات ،ICC المشبوهة</b> → نعيد <b>بناء البيكسلات من الصفر</b> عبر Canvas → تحصل على صورة نظيفة تماماً.</p>
+    <div class="features">
+      <span>✅ حذف الموقع GPS</span>
+      <span>✅ حذف نوع الكاميرا والتاريخ</span>
+      <span>✅ حذف البصمات والتعليقات</span>
+      <span>✅ إعادة ترميز كاملة</span>
+    </div>
+  </div>
+</header>
+
+<main class="container">
+  <section class="card settings-card">
+    <h2>⚙️ الإعدادات</h2>
+    <div class="settings-grid">
+      <label>
+        صيغة الإخراج
+        <select id="format">
+          <option value="keep">نفس الصيغة الأصلية</option>
+          <option value="image/jpeg">JPEG (الأفضل للتصوير)</option>
+          <option value="image/png">PNG (يحافظ على الشفافية)</option>
+          <option value="image/webp">WebP (حجم أصغر)</option>
+        </select>
+      </label>
+      <label>
+        الجودة: <span id="qVal">92%</span>
+        <input type="range" id="quality" min="60" max="100" value="92">
+      </label>
+      <label>
+        أكبر بُعد (بكسل - 0 = بدون تغيير)
+        <input type="number" id="maxSize" value="0" min="0" max="8000" placeholder="مثال: 2048">
+      </label>
+      <label class="check">
+        <input type="checkbox" id="cleanName" checked>
+        تنظيف اسم الملف (إزالة أي معلومات من الاسم)
+      </label>
+    </div>
+    <p class="hint">💡 الطريقة: نفك ترميز الصورة إلى بيكسلات خام ثم نعيد ترميزها. أي EXIF / XMP / IPTC / COM / tEXt لا ينتقل أبداً لأنه لم يُنسخ — بل أُعيد إنشاؤه.</p>
+  </section>
+
+  <section id="dropzone" class="card dropzone" tabindex="0">
+    <div class="dz-icon">📷</div>
+    <h2>اسحب الصور هنا أو اضغط للاختيار</h2>
+    <p>JPG • PNG • WebP • GIF (أول إطار) • BMP — تدعم سحب متعدد ولصق بـ Ctrl+V</p>
+    <input type="file" id="fileInput" accept="image/*" multiple hidden>
+    <button class="btn primary" id="pickBtn">اختر صوراً</button>
+  </section>
+
+  <section id="results" class="results"></section>
+
+  <section class="card how">
+    <h2>🔍 كيف نتأكد أنها نظيفة 100%؟</h2>
+    <ol>
+      <li><b>لا ننسخ الملف:</b> نرسم الصورة على <code>&lt;canvas&gt;</code> كبكسلات فقط.</li>
+      <li><b>إعادة ترميز:</b> نولّد ملفاً جديداً بـ <code>canvas.toBlob()</code> — المتصفح يكتب فقط بكسلات + ترويسة أساسية نظيفة، بدون APP1/APP13/COM/tEXt/eXIf.</li>
+      <li><b>تجاهل التوجيه المخزن:</b> نطبق التدوير بصرياً ثم نحذف وسم Orientation.</li>
+      <li><b>اسم جديد + تاريخ جديد:</b> لا توجد بصمة اسم أو timestamp قديم.</li>
+      <li><b>فحص بعد التنظيف:</b> الموقع يفحص الملف الناتج بباحث markers ويعرض لك "نظيف ✅".</li>
+    </ol>
+    <details>
+      <summary>ما الذي يُحذف بالضبط؟</summary>
+      <ul>
+        <li>GPS (خط الطول/العرض/الارتفاع)، EXIF (كاميرا، عدسة، سرعة، ISO، تاريخ التصوير)</li>
+        <li>XMP (Adobe / Lightroom history)، IPTC (مصور، حقوق، كلمات)</li>
+        <li>Thumbnail مضمّن، تعليق JPEG COM، قطع PNG النصية tEXt/iTXt/zTXt/eXIf</li>
+        <li>ICC profile (نعيد بناء بألوان sRGB الافتراضية)، Software / Artist tags</li>
+      </ul>
+    </details>
+  </section>
+
+  <footer>
+    <p>مفتوح المصدر • يعمل على GitHub Pages • لا سيرفر • لا تتبع • MIT</p>
+  </footer>
+</main>
+
+<script src="app.js"></script>
+</body>
+</html>
